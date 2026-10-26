@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OS Task 2 | Synchronization Lab</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+header {
+  background: #172554;
+  color: white;
+  padding: 25px 7%;
+}
+header h1 { margin: 0 0 8px; font-size: 27px; }
+header p { margin: 0; color: #dbeafe; }
+main { max-width: 1100px; margin: 25px auto; padding: 0 18px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+button {
+  border: 1px solid #cbd5e1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+button.active, button.primary { background: #1d4ed8; color: white; }
+.panel {
+  background: white;
+  border: 1px solid #dbe3ed;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 18px;
+}
+h2 { margin-top: 0; color: #1d4ed8; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.diagram {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  align-items: center; justify-content: center;
+  min-height: 130px; padding: 15px;
+  background: #f8fafc; border-radius: 10px;
+}
+.node {
+  padding: 13px 16px; border-radius: 9px;
+  background: #dbeafe; border: 2px solid #60a5fa;
+  text-align: center; font-weight: 600;
+}
+.node.active { background: #dcfce7; border-color: #16a34a; }
+.node.wait { background: #fef3c7; border-color: #d97706; }
+#eventText {
+  background: #0f172a; color: #e2e8f0;
+  padding: 18px; border-radius: 8px;
+  min-height: 85px; font-family: Consolas, monospace;
+}
+.muted { color: #64748b; font-size: 14px; }
+.event-list { max-height: 300px; overflow-y: auto; }
+.event-row { padding: 9px; border-bottom: 1px solid #e2e8f0; cursor: pointer; }
+.event-row.selected { background: #dbeafe; border-left: 4px solid #2563eb; }
+.progress { height: 7px; background: #e2e8f0; border-radius: 10px; margin: 12px 0; }
+#bar { height: 7px; width: 0; background: #2563eb; border-radius: 10px; }
+footer { text-align: center; color: #64748b; padding: 20px; font-size: 13px; }
+@media(max-width:750px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Operating Systems: Synchronization Laboratory</h1>
+  <p>Readers-Writers and Dining Philosophers | Semaphore and Monitor Approaches</p>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Choose an experiment</h2>
+    <div class="tabs">
+      <button class="active" data-key="rwSem">1. Readers-Writers: Semaphore</button>
+      <button data-key="rwMon">2. Readers-Writers: Monitor</button>
+      <button data-key="dpSem">3. Dining: Semaphore</button>
+      <button data-key="dpMon">4. Dining: Monitor</button>
+    </div>
+    <p id="description"></p>
+    <p class="muted">Use Next Event to inspect each stage. This page demonstrates the synchronization logic; it does not control Java's live thread scheduler.</p>
+  </section>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>Resource / state view</h2>
+      <div class="diagram" id="diagram"></div>
+      <p id="stateInfo" class="muted"></p>
+    </section>
+    <section class="panel">
+      <h2>Current event</h2>
+      <div id="eventText">Select an experiment to begin.</div>
+      <p id="counter" class="muted"></p>
+      <div class="progress"><div id="bar"></div></div>
+      <button id="previous">← Previous</button>
+      <button id="next" class="primary">Next Event →</button>
+      <button id="reset">Reset</button>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>Event sequence</h2>
+    <div class="event-list" id="eventList"></div>
+  </section>
+
+  <section class="panel">
+    <h2>What should be observed?</h2>
+    <ul>
+      <li><b>Readers-Writers:</b> readers can overlap, but writers need exclusive access to the shared value.</li>
+      <li><b>Dining Philosophers:</b> a philosopher must acquire both neighboring chopsticks before eating.</li>
+      <li><b>Semaphore:</b> resource access is controlled through acquire and release operations.</li>
+      <li><b>Monitor:</b> shared state and conditions determine when a thread may proceed.</li>
+    </ul>
+    <p class="muted">The event sequence is an illustrative trace. Actual thread order may differ between executions.</p>
+  </section>
+</main>
+<footer>OS Task 2 | Interactive synchronization learning page</footer>
+
+<script>
+const experiments = {
+  rwSem: {
+    description: "Semaphore solution: the first reader protects the shared resource; the last reader releases it. Writers use exclusive access.",
+    info: "Several readers may read together. A writer waits until readers have left.",
+    nodes: ["Reader 1", "Reader 2", "Reader 3", "Shared Resource", "Writer"],
+    events: [
+      ["Reader 1 enters the reading section.", "active"],
+      ["Reader 2 joins the readers already reading.", "active"],
+      ["Reader 3 joins; the active-reader count reaches three.", "active"],
+      ["A writer waits because the shared resource is in use.", "wait"],
+      ["Reader 1 finishes; other readers remain.", "active"],
+      ["Reader 2 finishes; one reader remains.", "active"],
+      ["Reader 3 finishes; the last reader releases the resource.", "active"],
+      ["Writer acquires exclusive access and updates the shared value.", "active"],
+      ["Writer releases the resource after writing.", "active"]
+    ]
+  },
+  rwMon: {
+    description: "Monitor solution: active-reader and writer-state conditions control entry into the critical section.",
+    info: "Readers wait while a writer is active. Writers wait until there are no active readers or writers.",
+    nodes: ["Reader State", "Monitor", "Shared Value", "Writer State"],
+    events: [
+      ["The monitor initializes the reader count and writer state.", "active"],
+      ["Reader 1 enters after checking the writer condition.", "active"],
+      ["Readers 2 and 3 enter while no writer is active.", "active"],
+      ["A writer waits because readers are still active.", "wait"],
+      ["The readers finish and update the reader count.", "active"],
+      ["The last reader notifies waiting threads.", "active"],
+      ["A writer checks the condition and enters exclusively.", "active"],
+      ["The writer updates the shared value.", "active"],
+      ["The writer clears its active state and notifies waiting threads.", "active"]
+    ]
+  },
+  dpSem: {
+    description: "Semaphore solution: each chopstick has its own semaphore. A room semaphore limits entry into the acquisition phase.",
+    info: "Only non-conflicting philosophers can use adjacent chopsticks at the same time.",
+    nodes: ["P1", "Chopstick 1", "P2", "Chopstick 2", "P3", "Chopstick 3", "P4", "Chopstick 4"],
+    events: [
+      ["All four philosophers begin in the thinking state.", "active"],
+      ["P1 and P3 become hungry.", "wait"],
+      ["P1 acquires chopsticks 1 and 2.", "active"],
+      ["P3 acquires chopsticks 3 and 4.", "active"],
+      ["P1 and P3 eat using separate chopsticks.", "active"],
+      ["P1 finishes and releases both chopsticks.", "active"],
+      ["P3 finishes and releases both chopsticks.", "active"],
+      ["P2 and P4 can now acquire their required chopsticks.", "active"],
+      ["All four philosophers complete the eating phase.", "active"]
+    ]
+  },
+  dpMon: {
+    description: "Monitor solution: each philosopher has a state. Eating is allowed only when neither neighbor is eating.",
+    info: "State checks and notifications coordinate access to the two neighboring chopsticks.",
+    nodes: ["P1: State", "P2: State", "P3: State", "P4: State", "Monitor"],
+    events: [
+      ["All philosopher states are initialized to THINKING.", "active"],
+      ["P1 and P3 change their states to HUNGRY.", "wait"],
+      ["The monitor checks the neighbors of P1.", "active"],
+      ["P1 is allowed to change to EATING.", "active"],
+      ["The monitor checks the neighbors of P3.", "active"],
+      ["P3 is allowed to change to EATING because P1 and P3 are not neighbors.", "active"],
+      ["P1 finishes and returns to THINKING.", "active"],
+      ["P3 finishes and returns to THINKING.", "active"],
+      ["Waiting philosophers are notified and re-check their conditions.", "active"]
+    ]
+  }
+};
+
+let currentKey = "rwSem";
+let currentIndex = 0;
+const $ = id => document.getElementById(id);
+
+function render() {
+  const exp = experiments[currentKey];
+  $("description").textContent = exp.description;
+  $("stateInfo").textContent = exp.info;
+  $("diagram").innerHTML = "";
+  exp.nodes.forEach((name, i) => {
+    const node = document.createElement("div");
+    node.className = "node";
+    if (i === currentIndex % exp.nodes.length) node.classList.add("active");
+    else if (exp.events[currentIndex][1] === "wait" && i === exp.nodes.length - 1) node.classList.add("wait");
+    node.textContent = name;
+    $("diagram").appendChild(node);
+  });
+  $("eventText").textContent = exp.events[currentIndex][0];
+  $("counter").textContent = `Event ${currentIndex + 1} of ${exp.events.length}`;
+  $("bar").style.width = `${((currentIndex + 1) / exp.events.length) * 100}%`;
+  $("previous").disabled = currentIndex === 0;
+  $("next").disabled = currentIndex === exp.events.length - 1;
+
+  $("eventList").innerHTML = "";
+  exp.events.forEach((event, index) => {
+    const row = document.createElement("div");
+    row.className = "event-row" + (index === currentIndex ? " selected" : "");
+    row.textContent = `${index + 1}. ${event[0]}`;
+    row.onclick = () => { currentIndex = index; render(); };
+    $("eventList").appendChild(row);
+  });
+  document.querySelectorAll("[data-key]").forEach(button => {
+    button.classList.toggle("active", button.dataset.key === currentKey);
+  });
+}
+
+document.querySelectorAll("[data-key]").forEach(button => {
+  button.addEventListener("click", () => {
+    currentKey = button.dataset.key;
+    currentIndex = 0;
+    render();
+  });
+});
+$("previous").onclick = () => { if (currentIndex > 0) currentIndex--; render(); };
+$("next").onclick = () => {
+  if (currentIndex < experiments[currentKey].events.length - 1) currentIndex++;
+  render();
+};
+$("reset").onclick = () => { currentIndex = 0; render(); };
+render();
+</script>
+</body>
+</html>

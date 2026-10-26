@@ -1,0 +1,118 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Readers-Writers Using Semaphores — Execution Report</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #202b38;
+    margin: 0;
+}
+header {
+    background: #17365d;
+    color: white;
+    padding: 25px 7%;
+}
+main {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 0 18px;
+}
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+h2 { color: #17365d; }
+pre {
+    background: #101827;
+    color: #d7f7df;
+    padding: 20px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+}
+.tag {
+    display: inline-block;
+    background: #dbeafe;
+    padding: 7px 12px;
+    border-radius: 5px;
+}
+footer {
+    text-align: center;
+    color: #64748b;
+    padding: 20px;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Operating Systems — Task 2</h1>
+<p>Readers-Writers Problem Using Semaphores</p>
+<p>Student: Kruthi N | USN: NNM24IS112</p>
+</header>
+
+<main>
+<section>
+<h2>1. Objective</h2>
+<p>
+To demonstrate synchronization between reader and writer threads
+accessing a shared resource using semaphores. Multiple readers may
+read concurrently, while a writer requires exclusive access.
+</p>
+<span class="tag">Implementation: Java Semaphores</span>
+</section>
+
+<section>
+<h2>2. Actual Execution Output</h2>
+<p>
+The following output was recorded during the Option 1 execution
+of the Java program.
+</p>
+<pre>READERS-WRITERS USING SEMAPHORES
+Writer 2 is waiting for exclusive access.
+Writer 1 is waiting for exclusive access.
+Reader 1 starts reading shared value = 0 (active readers = 1)
+Reader 2 starts reading shared value = 0 (active readers = 2)
+Reader 3 starts reading shared value = 0 (active readers = 3)
+Reader 1 finishes reading (active readers = 2)
+Reader 3 finishes reading (active readers = 1)
+Reader 2 finishes reading (active readers = 0)
+Writer 2 writes shared value = 1
+Writer 2 finishes writing.
+Writer 1 writes shared value = 2
+Writer 1 finishes writing.
+Readers-Writers semaphore execution completed.</pre>
+</section>
+
+<section>
+<h2>3. Interpretation</h2>
+<ul>
+<li>Three readers access the shared resource concurrently.</li>
+<li>The active-reader count decreases as each reader finishes reading.</li>
+<li>Both writers wait for exclusive access while readers are active.</li>
+<li>After all readers finish, the writers update the shared value one at a time.</li>
+<li>The shared value changes from 0 to 1 and then to 2.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. Result</h2>
+<p>
+The semaphore-based Readers-Writers implementation completed
+successfully. The recorded output demonstrates concurrent reading
+and exclusive writing for this execution.
+</p>
+<p><strong>Note:</strong> Thread execution order may vary between runs.</p>
+</section>
+</main>
+
+<footer>Operating Systems Task 2 — Execution evidence</footer>
+</body>
+</html>

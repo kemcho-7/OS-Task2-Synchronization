@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dining Philosophers Using Monitor — Execution Report</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #202b38;
+    margin: 0;
+}
+header {
+    background: #17365d;
+    color: white;
+    padding: 25px 7%;
+}
+main {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 0 18px;
+}
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+h2 {
+    color: #17365d;
+}
+pre {
+    background: #101827;
+    color: #d7f7df;
+    padding: 20px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+}
+.tag {
+    display: inline-block;
+    background: #dbeafe;
+    padding: 7px 12px;
+    border-radius: 5px;
+}
+footer {
+    text-align: center;
+    color: #64748b;
+    padding: 20px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Operating Systems — Task 2</h1>
+    <p>Dining Philosophers Problem Using Monitors</p>
+    <p>Student: Kruthi N | USN: NNM24IS112</p>
+</header>
+
+<main>
+<section>
+    <h2>1. Objective</h2>
+    <p>
+        To implement the Dining Philosophers problem using monitor-based
+        synchronization for four philosophers sharing four chopsticks.
+        The monitor coordinates access to shared resources so that
+        neighboring philosophers do not use the same chopstick
+        simultaneously.
+    </p>
+    <span class="tag">Implementation: Java Monitor</span>
+</section>
+
+<section>
+    <h2>2. Actual Execution Output</h2>
+    <p>
+        The following output is transcribed from the Option 4
+        execution of the Java program.
+    </p>
+    <pre>DINING PHILOSOPHERS USING MONITOR — 4 PHILOSOPHERS
+P2 is thinking.
+P4 is thinking.
+P1 is thinking.
+P3 is thinking.
+P1 is hungry.
+P1 starts eating.
+P2 is hungry.
+P4 is hungry.
+P3 is hungry.
+P3 starts eating.
+P1 finishes eating and starts thinking.
+P3 finishes eating and starts thinking.
+P2 starts eating.
+P4 starts eating.
+P4 finishes eating and starts thinking.
+P2 finishes eating and starts thinking.
+Dining Philosophers monitor execution completed.</pre>
+</section>
+
+<section>
+    <h2>3. Interpretation</h2>
+    <ul>
+        <li>The program simulates four philosophers, P1 to P4, sharing four chopsticks.</li>
+        <li>Each philosopher begins by thinking and may then become hungry.</li>
+        <li>A hungry philosopher starts eating when the monitor permits access to the required chopsticks.</li>
+        <li>The output shows P1 and P3 eating first, followed by P2 and P4.</li>
+        <li>After eating, each philosopher returns to thinking.</li>
+        <li>The program reports completion after the simulated eating activities finish.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>4. Result</h2>
+    <p>
+        The Dining Philosophers problem was executed using monitor-based
+        synchronization for four philosophers and four chopsticks.
+        The recorded output demonstrates coordination between philosophers
+        competing for shared resources.
+    </p>
+    <p>
+        <strong>Note:</strong> Thread scheduling and output order may vary
+        between executions.
+    </p>
+</section>
+</main>
+
+<footer>
+    Operating Systems Task 2 — Execution evidence
+</footer>
+
+</body>
+</html>

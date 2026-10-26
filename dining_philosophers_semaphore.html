@@ -1,0 +1,125 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dining Philosophers Using Semaphores — Execution Report</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2f7;
+    color: #202b38;
+    margin: 0;
+}
+header {
+    background: #17365d;
+    color: white;
+    padding: 25px 7%;
+}
+main {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 0 18px;
+}
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+h2 { color: #17365d; }
+pre {
+    background: #101827;
+    color: #d7f7df;
+    padding: 20px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+}
+.tag {
+    display: inline-block;
+    background: #dbeafe;
+    padding: 7px 12px;
+    border-radius: 5px;
+}
+footer {
+    text-align: center;
+    color: #64748b;
+    padding: 20px;
+}
+</style>
+</head>
+<body>
+<header>
+<h1>Operating Systems — Task 2</h1>
+<p>Dining Philosophers Problem Using Semaphores</p>
+<p>Student: Kruthi N | USN: NNM24IS112</p>
+</header>
+
+<main>
+<section>
+<h2>1. Objective</h2>
+<p>
+To implement the Dining Philosophers problem using semaphores
+for four philosophers sharing four chopsticks. The synchronization
+mechanism coordinates access to chopsticks so that adjacent
+philosophers do not use the same chopstick simultaneously.
+</p>
+<span class="tag">Implementation: Java Semaphores</span>
+</section>
+
+<section>
+<h2>2. Actual Execution Output</h2>
+<p>
+The following is the execution trace displayed for Option 3.
+The sequence below is transcribed from the execution output
+shown for the semaphore implementation.
+</p>
+<pre>DINING PHILOSOPHERS USING SEMAPHORES — 4 PHILOSOPHERS
+P1 is thinking.
+P3 is thinking.
+P4 is thinking.
+P2 is thinking.
+P2 is hungry.
+P1 is hungry.
+P4 is hungry.
+P3 is hungry.
+P2 eats using chopsticks 2 and 3.
+P2 finishes eating.
+P1 eats using chopsticks 1 and 2.
+P1 finishes eating.
+P4 eats using chopsticks 4 and 1.
+P4 finishes eating.
+P3 eats using chopsticks 3 and 4.
+P3 finishes eating.
+Dining Philosophers semaphore execution completed.</pre>
+</section>
+
+<section>
+<h2>3. Interpretation</h2>
+<ul>
+<li>The program simulates four philosophers, P1 to P4, and four chopsticks.</li>
+<li>Each philosopher alternates between thinking, becoming hungry, and eating.</li>
+<li>A philosopher must obtain the required chopsticks before eating.</li>
+<li>Semaphores coordinate access to chopsticks and prevent conflicting use of the same chopstick.</li>
+<li>The execution completes after the philosophers finish eating.</li>
+</ul>
+</section>
+
+<section>
+<h2>4. Result</h2>
+<p>
+The semaphore-based Dining Philosophers program completed
+successfully for the recorded execution. The output demonstrates
+coordination between four philosophers competing for four chopsticks.
+</p>
+<p><strong>Note:</strong> The order of thread messages may vary between runs.</p>
+</section>
+</main>
+
+<footer>Operating Systems Task 2 — Execution evidence</footer>
+</body>
+</html>
+```
